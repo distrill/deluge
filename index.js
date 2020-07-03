@@ -20,12 +20,15 @@ module.exports = function (deluge_url, password) {
          * @param dlPath
          * @param callback
          */
-        add: function (magnet, dlPath) {
+        add: function (magnet, dlPath, callback) {
             return new Promise((resolve, reject) => {
-              executeApiCall(function () {
-                add(magnet, dlPath, (err, data) => {
+              if (!callback) {
+                callback = (err, data) => {
                   err ? reject(err) : resolve(data);
-                });
+                }
+              }
+              executeApiCall(function () {
+                add(magnet, dlPath, callback);
               })
             });
         },
