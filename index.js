@@ -36,12 +36,15 @@ module.exports = function (deluge_url, password) {
          * Get the list of all the hosts that the WebUI can connect to
          * @param callback
          */
-        getHosts: function () {
+        getHosts: function (callback) {
             return new Promise((resolve, reject) => {
-              executeApiCall(function () {
-                getHostList((err, data) => {
+              if (!callback) {
+                callback = (err, data) => {
                   err ? reject(err) : resolve(data);
-                });
+                }
+              }
+              executeApiCall(function () {
+                getHostList(callback);
               }, false)
             });
         },
@@ -50,22 +53,28 @@ module.exports = function (deluge_url, password) {
          * @param hostID
          * @param callback
          */
-        connect: function (hostID) {
+        connect: function (hostID, callback) {
             return new Promise((resolve, reject) => {
-              executeApiCall(function () {
-                connectToDaemon(hostID, (err, data) => {
+              if (!callback) {
+                callback = (err, data) => {
                   err ? reject(err) : resolve(data);
-                });
+                }
+              }
+              executeApiCall(function () {
+                connectToDaemon(hostID, callback);
               }, false)
             });
         },
 
-        isConnected: function() {
+        isConnected: function(callback) {
           return new Promise((resolve, reject) => {
-            executeApiCall(function () {
-              isConnected((err, data) => {
+            if (!callback) {
+              callback = (err, data) => {
                 err ? reject(err) : resolve(data);
-              });
+              }
+            }
+            executeApiCall(function () {
+              isConnected(callback);
             }, false)
           });
         },
@@ -75,11 +84,14 @@ module.exports = function (deluge_url, password) {
          * {'http://example.org/': 'uid=1234;pass=xxxx;'}
          * @object cookies
          */
-        setCookies: function (cookies) {
+        setCookies: function (cookies, callback) {
           return new Promise((resolve, reject) => {
-            setCookies(cookies, (err, data) => {
-              err ? reject(err) : resolve(data);
-            });
+            if (!callback) {
+              callback = (err, data) => {
+                err ? reject(err) : resolve(data);
+              }
+            }
+            setCookies(cookies, callback);
           });
         },
 
@@ -87,12 +99,15 @@ module.exports = function (deluge_url, password) {
          * Get the list of all torrents and changing data that represents their status in the WebUI
          * @param callback
          */
-        getTorrentRecord: function () {
+        getTorrentRecord: function (callback) {
           return new Promise((resolve, reject) => {
-            executeApiCall(function () {
-              getTorrentRecord((err, data) => {
+            if (!callback) {
+              callback = (err, data) => {
                 err ? reject(err) : resolve(data);
-              });
+              }
+            }
+            executeApiCall(function () {
+              getTorrentRecord(callback);
             })
           });
         }
