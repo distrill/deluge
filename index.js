@@ -1,12 +1,9 @@
-const fs = require('fs');
-const path = require('path');
 const restler = require('restler');
 const validUrl = require('valid-url');
 
-const connected = false;
-const isAuthentificated = false;
+let isAuthentificated = false;
 
-const msgId = 0;
+let msgId = 0;
 
 let PASSWORD;
 let DELUGE_URL;
@@ -36,7 +33,7 @@ module.exports = function (deluge_url, password) {
          * Get the list of all the hosts that the WebUI can connect to
          * @param callback
          */
-        getHosts: function (callback) {
+        getHosts: function () {
             return new Promise((resolve, reject) => {
               executeApiCall(function () {
                 getHostList((err, data) => {
@@ -50,7 +47,7 @@ module.exports = function (deluge_url, password) {
          * @param hostID
          * @param callback
          */
-        connect: function (hostID, callback) {
+        connect: function (hostID) {
             return new Promise((resolve, reject) => {
               executeApiCall(function () {
                 connectToDaemon(hostID, (err, data) => {
@@ -60,10 +57,10 @@ module.exports = function (deluge_url, password) {
             });
         },
 
-        isConnected: function(callback) {
+        isConnected: function() {
           return new Promise((resolve, reject) => {
             executeApiCall(function () {
-              isConnected((err, res) => {
+              isConnected((err, data) => {
                 err ? reject(err) : resolve(data);
               });
             }, false)
@@ -75,7 +72,7 @@ module.exports = function (deluge_url, password) {
          * {'http://example.org/': 'uid=1234;pass=xxxx;'}
          * @object cookies
          */
-        setCookies: function (cookies, callback) {
+        setCookies: function (cookies) {
           return new Promise((resolve, reject) => {
             setCookies(cookies, (err, data) => {
               err ? reject(err) : resolve(data);
@@ -87,7 +84,7 @@ module.exports = function (deluge_url, password) {
          * Get the list of all torrents and changing data that represents their status in the WebUI
          * @param callback
          */
-        getTorrentRecord: function (callback) {
+        getTorrentRecord: function () {
           return new Promise((resolve, reject) => {
             executeApiCall(function () {
               getTorrentRecord((err, data) => {
@@ -194,13 +191,6 @@ function isConnected(callback) {
     });
 }
 
-function getHosts(callback) {
-    post({
-        method: 'web.get_hosts',
-        params: []
-    }, callback);
-}
-
 function decodeServerResponse(result, callback, response) {
     if (result['error']) {
         callback(result['error'], null, response);
@@ -226,10 +216,10 @@ function downloadTorrentFile(url, cookie, callback) {
  * @param url
  */
 function searchCookieJar(url){
-    const cookie = '';
+    let cookie = '';
     for (const key in COOKIE_JAR) {
         // Check if url starts with key, see: http://stackoverflow.com/q/646628/2402914
-        if (COOKIE_JAR.hasOwnProperty(key) && url.lastIndexOf(key, 0) === 0) {
+        if (url.lastIndexOf(key, 0) === 0) {
             cookie = COOKIE_JAR[key];
             console.log("Using cookies for "+key);
             break;
@@ -255,7 +245,7 @@ function add(torrent, dlPath, callback) {
 
 function addTorrent(magnet, dlPath, callback) {
     console.log("Adding: " + magnet);
-    const config = {
+    let config = {
         file_priorities: [],
         add_paused: false,
         compact_allocation: true,
@@ -287,13 +277,13 @@ function post(body, callback) {
             'Cookie': SESSION_COOKIE
         }
     })
-        .on('success', function (result, response) {
+        .on('complete', function (result, response) {
             decodeServerResponse(result, callback, response);
         });
 }
 
 function getCookie(headers) {
-    const cookie;
+    let cookie;
 
     if (headers && headers['set-cookie']) {
         cookie = headers['set-cookie'][0].split(';')[0];
