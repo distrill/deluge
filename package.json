@@ -16,10 +16,12 @@
     "torrent"
   ],
   "author": "Greg Inman <ginman86@gmail.com> (https://github.com/ginman86)",
-  "contributors": [{
-    "name": "Antoine Aflalo",
-    "email": "antoineaf+npm@admincmd.com"
-  }],
+  "contributors": [
+    {
+      "name": "Antoine Aflalo",
+      "email": "antoineaf+npm@admincmd.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ginman86/deluge/issues"
@@ -29,5 +31,8 @@
     "valid-url": "1.0.x"
   },
   "readmeFilename": "README.md",
-  "homepage": "https://github.com/ginman86/deluge"
+  "homepage": "https://github.com/ginman86/deluge",
+  "devDependencies": {
+    "eslint": "^7.3.1"
+  }
 }
